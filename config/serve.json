@@ -1,0 +1,30 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/IconnectHome.aspx",
+      
+      "customActions": {
+        "32bac424-0bba-43ce-b335-33fb99a67411": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "testMessage": "Test message"
+          }
+        }
+      }
+    },
+    "bpclApplicationCustomizer": {
+      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/IconnectHome.aspx",
+      "customActions": {
+        "32bac424-0bba-43ce-b335-33fb99a67411": {
+          "location": "ClientSideExtension.ApplicationCustomizer",
+          "properties": {
+            "testMessage": "Test message"
+          }
+        }
+      }
+    }
+  }
+}

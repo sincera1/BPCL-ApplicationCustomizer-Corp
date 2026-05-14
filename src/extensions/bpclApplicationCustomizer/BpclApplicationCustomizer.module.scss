@@ -1,0 +1,493 @@
+:global(#spPageCanvasContent),
+:global(.CanvasComponent.LCS),
+:global(.CanvasZone) {
+  display: block !important;
+}
+
+:global(.spAppAndPropertyPanelContainer) {
+  min-height: auto !important;
+}
+
+// :global(.sp-placeholder-bottom) {
+//   position: static !important;
+// }
+
+:global(.ms-SPLegacyFabricBlock) {
+  display: block !important;
+}
+
+:global(.ms-Placeholder) {
+  overflow: visible !important;
+}
+
+.topNav {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  background: #fff;
+  padding: 0px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  margin-left: 20px;
+  align-items: center;
+}
+
+.menuItem {
+  position: relative;
+  padding: 6px 12px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.link {
+  color: #032492;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+.link:hover {
+  color: #dba300;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+
+/* ================= DROPDOWN ================= */
+.submenu {
+  // max-height: 650px;
+
+  min-width: 250px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  z-index: 9999;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.submenuWrapper {
+  display: flex;
+  gap: 10px;
+} /* Each column */
+.column {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 250px;
+} /* Single column */
+.singleColumn {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 250px;
+}
+.submenuColumnsWrapper {
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  /* Stack columns vertically */
+  .submenuWrapper {
+    display: block;
+  }
+
+  /* Make each column full width */
+  .column,
+  .singleColumn {
+    min-width: 100%;
+    width: 100%;
+  }
+}
+
+.dropdown:hover > .submenu {
+  display: block;
+}
+
+.submenuItem {
+  padding: 0;
+  position: relative;
+}
+
+.submenuLink {
+  display: flex;
+  padding: 8px 24px;
+  white-space: nowrap;
+  color: #032492;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.submenuLink i {
+  margin-left: 10px;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.submenu li:hover > .submenuLink {
+  background: #032492;
+  border-left: 4px solid #dba300;
+  color: #fff;
+  cursor: pointer;
+}
+
+.link i {
+  font-size: 16px;
+  margin-right: 3px;
+}
+
+.rightMenu {
+  margin-left: auto;
+}
+
+.gearMenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #fff;
+  min-width: 180px;
+  z-index: 9999;
+  // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.rightMenu:hover > .gearMenu {
+  display: block;
+}
+
+.gearMenuItem {
+  padding: 0;
+}
+
+.gearMenuLink {
+  display: block;
+  padding: 8px 24px;
+  color: #032492;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  white-space: nowrap;
+}
+
+.gearMenu li:hover > .gearMenuLink {
+  background: #032492;
+  border-left: 4px solid #dba300;
+  color: #fff;
+}
+
+.rightMenu i {
+  font-size: 25px;
+}
+
+.dropdownIcon {
+  margin-left: 1px !important;
+  font-size: 10px !important;
+  vertical-align: middle !important;
+  transition: transform 0.3s ease !important;
+}
+
+.menuItem.dropdown:hover > .link > .dropdownIcon {
+  transform: rotate(180deg) !important;
+}
+
+.logo {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.logo img {
+  height: 44px;
+  width: auto;
+}
+
+.logoText {
+  color: #032492 !important;
+  font-size: 20px !important;
+  margin-left: 10px !important;
+}
+
+/* ================= FOOTER ================= */
+
+.footerBar {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  background: #0e1927;
+  color: #fff;
+  padding: 15px 20px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.footerLeft {
+  flex: 1;
+}
+
+.footerRight {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.footerRight a {
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footerRight a:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+/* ================= TABLET ================= */
+@media (max-width: 992px) {
+  .footerBar {
+    font-size: 12px;
+    padding: 15px;
+  }
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+  .footerBar {
+    flex-direction: column;
+    text-align: center;
+    padding: 18px 15px;
+  }
+
+  .footerLeft {
+    margin-bottom: 10px;
+  }
+
+  .footerRight {
+    justify-content: center;
+  }
+}
+
+/* ================= SMALL MOBILE ================= */
+@media (max-width: 480px) {
+  .footerBar {
+    font-size: 11px;
+  }
+
+  .footerRight {
+    gap: 8px;
+  }
+
+  .footerRight a {
+    display: block;
+  }
+}
+
+/* ================= MOBILE ================= */
+.navToggle {
+  display: none;
+}
+
+.hamburger {
+  display: none;
+  font-size: 26px;
+  color: #032492;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+@media (max-width: 1366px) {
+  .rightMenu i {
+    font-size: 20px;
+  }
+
+  .menuItem {
+    padding: 6px 6x;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    flex-direction: column;
+    display: none;
+    margin: 0px;
+  }
+
+  .menuItem {
+    padding: 6px 12px;
+    position: relative;
+  }
+
+  .navToggle:checked + .hamburger + .menu {
+    display: flex;
+    //z-index: 1200;
+    z-index: 99998;
+    align-items: flex-start;
+  }
+
+  .submenu,
+  .gearMenu {
+    position: static;
+    box-shadow: none;
+    background: #fff;
+    margin-top: 10px;
+  }
+
+  .gearMenu li:hover > .submenuLink .gearMenuLink {
+    background: #032492;
+    border-left: 4px solid #dba300;
+    color: #fff;
+  }
+
+  .submenuLink,
+  .gearMenuLink {
+    color: #032492;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  .rightMenu {
+    margin-left: 0;
+  }
+}
+
+.s_gNdSu_1x34n {
+  overflow: hidden;
+  padding-bottom: 0px !important;
+}
+
+.spAppAndPropertyPanelContainer {
+  padding-bottom: 0px !important;
+}
+
+// :global(.spAppAndPropertyPanelContainer) {
+//     padding-bottom: 0 !important;
+// }
+
+/* ================= RIGHT SIDE SUBMENU (LEVEL 1) ================= */
+
+.rightSubmenu {
+  list-style: none;
+  //margin-left: 4px;
+  white-space: nowrap;
+  padding: 0;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  min-width: 220px;
+  background: #fff;
+  z-index: 10000;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+/* This is the key rule */
+.submenuItem:hover > .rightSubmenu {
+  display: block;
+}
+
+.rightSubmenu li a {
+  display: block;
+  color: #032492;
+  text-decoration: none;
+  padding: 8px 24px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  white-space: nowrap;
+}
+
+.rightSubmenu li a:hover {
+  background: #032492;
+  border-left: 4px solid #dba300;
+  color: #fff;
+}
+
+.submenuItem:focus-within .rightSubmenu {
+  display: block;
+}
+
+.dropdown:focus-within .submenu {
+  display: block;
+}
+
+.menuItem:focus-within .gearMenu {
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .submenu {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 1024px) {
+  .submenuLink i {
+    transform: rotate(90deg) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .rightSubmenu {
+    position: static !important;
+    top: auto;
+    left: auto;
+    display: none;
+    margin-left: 12px;
+    border: none !important;
+  }
+}

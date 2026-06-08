@@ -270,12 +270,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/qa-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -322,7 +322,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -355,9 +355,11 @@ export default class ApplicationCustomizerApplicationCustomizer
            <li class="${styles.gearMenuItem}">
              <a class="${styles.gearMenuLink}" href="${settingsUrl}" target="_self" tabindex="0"> Settings</a>
            </li>
+           
+           ` : ''}
            <li class="${styles.gearMenuItem}"> <a class="${styles.gearMenuLink}" href="${siteContentsUrl}" target="_self" tabindex="0"> Site Contents </a>
            </li>
-           ` : ''}
+
               <li class="${styles.gearMenuItem}">
                <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Help</a>
               </li>

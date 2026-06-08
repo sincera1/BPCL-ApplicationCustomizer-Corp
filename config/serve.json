@@ -4,7 +4,7 @@
   "https": true,
   "serveConfigurations": {
     "default": {
-      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/IconnectHome.aspx",
+      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/IconnectHome.aspx",
       
       "customActions": {
         "32bac424-0bba-43ce-b335-33fb99a67411": {
@@ -16,7 +16,7 @@
       }
     },
     "bpclApplicationCustomizer": {
-      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/IconnectHome.aspx",
+      "pageUrl": "https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/IconnectHome.aspx",
       "customActions": {
         "32bac424-0bba-43ce-b335-33fb99a67411": {
           "location": "ClientSideExtension.ApplicationCustomizer",

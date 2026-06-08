@@ -20,11 +20,8 @@ export interface IMenuItem {
 
 export default class MenuService {
 
-  // private static BASE_URL =
-  //   'https://bharatpetroleum.sharepoint.com/sites/qa-corporate-publishing-hub/';
 
-  //  Fixed site path (no tenant hardcoding)
-  private static HUB_SITE = "/sites/dev-corporate-publishing-hub";
+  private static HUB_SITE = "/sites/qa-corporate-publishing-hub";
 
   //  Dynamic base URL (tenant comes automatically)
   private static getBaseUrl(): string {

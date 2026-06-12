@@ -32,7 +32,7 @@
     Arial,
     sans-serif;
   background: #fff;
-  padding: 0px 12px 0px 52px;
+  padding: 0px 12px 0px 42px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -92,24 +92,30 @@
 .submenuWrapper {
   display: flex;
   gap: 10px;
-} /* Each column */
+}
+
+/* Each column */
 .column {
   list-style: none;
   margin: 0;
   padding: 0;
   min-width: 250px;
-} /* Single column */
+}
+
+/* Single column */
 .singleColumn {
   list-style: none;
   margin: 0;
   padding: 0;
   min-width: 250px;
 }
+
 .submenuColumnsWrapper {
   padding: 0;
 }
 
 @media (max-width: 768px) {
+
   /* Stack columns vertically */
   .submenuWrapper {
     display: block;
@@ -123,7 +129,7 @@
   }
 }
 
-.dropdown:hover > .submenu {
+.dropdown:hover>.submenu {
   display: block;
 }
 
@@ -149,7 +155,7 @@
   margin-top: 6px;
 }
 
-.submenu li:hover > .submenuLink {
+.submenu li:hover>.submenuLink {
   background: #032492;
   border-left: 4px solid #dba300;
   color: #fff;
@@ -181,7 +187,7 @@
   border-radius: 4px;
 }
 
-.rightMenu:hover > .gearMenu {
+.rightMenu:hover>.gearMenu {
   display: block;
 }
 
@@ -200,7 +206,7 @@
   white-space: nowrap;
 }
 
-.gearMenu li:hover > .gearMenuLink {
+.gearMenu li:hover>.gearMenuLink {
   background: #032492;
   border-left: 4px solid #dba300;
   color: #fff;
@@ -217,7 +223,7 @@
   transition: transform 0.3s ease !important;
 }
 
-.menuItem.dropdown:hover > .link > .dropdownIcon {
+.menuItem.dropdown:hover>.link>.dropdownIcon {
   transform: rotate(180deg) !important;
 }
 
@@ -369,7 +375,7 @@
     position: relative;
   }
 
-  .navToggle:checked + .hamburger + .menu {
+  .navToggle:checked+.hamburger+.menu {
     display: flex;
     //z-index: 1200;
     z-index: 99998;
@@ -384,7 +390,7 @@
     margin-top: 10px;
   }
 
-  .gearMenu li:hover > .submenuLink .gearMenuLink {
+  .gearMenu li:hover>.submenuLink .gearMenuLink {
     background: #032492;
     border-left: 4px solid #dba300;
     color: #fff;
@@ -435,7 +441,7 @@
 }
 
 /* This is the key rule */
-.submenuItem:hover > .rightSubmenu {
+.submenuItem:hover>.rightSubmenu {
   display: block;
 }
 
@@ -490,4 +496,10 @@
     margin-left: 12px;
     border: none !important;
   }
+}
+
+
+.navbar-nav .nav-item:last-child .dropdown-menu {
+  left: auto;
+  right: 0;
 }

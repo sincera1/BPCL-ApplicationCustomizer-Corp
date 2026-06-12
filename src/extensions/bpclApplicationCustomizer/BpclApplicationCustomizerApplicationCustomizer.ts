@@ -3,16 +3,7 @@ import styles from './BpclApplicationCustomizer.module.scss';
 import MenuService, { IMenuItem } from './Service';
 import { SPPermission } from '@microsoft/sp-page-context';
 
-
-
-
-
-
-import {
-  BaseApplicationCustomizer,
-  PlaceholderContent,
-  PlaceholderName
-} from '@microsoft/sp-application-base';
+import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName} from '@microsoft/sp-application-base';
 
 interface IMenuNode {
   Id: number;
@@ -25,7 +16,7 @@ export default class ApplicationCustomizerApplicationCustomizer
   extends BaseApplicationCustomizer<{}> {
 
   private _top: PlaceholderContent | undefined;
-  //private _bottom: PlaceholderContent | undefined;
+
 
 
 
@@ -270,7 +261,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iconnect-final"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
@@ -322,7 +313,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/qa-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -355,10 +346,12 @@ export default class ApplicationCustomizerApplicationCustomizer
            <li class="${styles.gearMenuItem}">
              <a class="${styles.gearMenuLink}" href="${settingsUrl}" target="_self" tabindex="0"> Settings</a>
            </li>
-           
-           ` : ''}
+
            <li class="${styles.gearMenuItem}"> <a class="${styles.gearMenuLink}" href="${siteContentsUrl}" target="_self" tabindex="0"> Site Contents </a>
            </li>
+           
+           ` : ''}
+           
 
               <li class="${styles.gearMenuItem}">
                <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Help</a>

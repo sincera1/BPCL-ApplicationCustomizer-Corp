@@ -2,8 +2,9 @@ import { Log } from '@microsoft/sp-core-library';
 import styles from './BpclApplicationCustomizer.module.scss';
 import MenuService, { IMenuItem } from './Service';
 import { SPPermission } from '@microsoft/sp-page-context';
+import AskDiaImage from './assets/AskDia.png';
 
-import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName} from '@microsoft/sp-application-base';
+import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '@microsoft/sp-application-base';
 
 interface IMenuNode {
   Id: number;
@@ -20,7 +21,46 @@ export default class ApplicationCustomizerApplicationCustomizer
 
 
 
+  // public async onInit(): Promise<void> {
+
+  //   Log.info('ApplicationCustomizer', 'Initialized');
+
+  //   this._hideAppBar();
+  //   this._loadBootstrapIcons();
+
+  //   await this._renderTop();
+
+  //   this._renderBottom();
+
+  //   // Show Command Bar only in Edit Mode
+  //   const toggleCommandBar = (): void => {
+
+  //     const commandBar = document.getElementById('spCommandBar');
+
+  //     if (commandBar) {
+
+  //       const isEditMode =
+  //         window.location.href.toLowerCase().indexOf('mode=edit') > -1;
+
+  //       commandBar.style.display = isEditMode ? 'flex' : 'none';
+  //     }
+  //   };
+
+  //   toggleCommandBar();
+
+  //   this.context.application.navigatedEvent.add(this, () => {
+
+  //     this._renderBottom();
+
+  //     toggleCommandBar();
+
+  //   });
+
+  //   return Promise.resolve();
+  // }
+
   public async onInit(): Promise<void> {
+
     Log.info('ApplicationCustomizer', 'Initialized');
 
     this._hideAppBar();
@@ -30,12 +70,38 @@ export default class ApplicationCustomizerApplicationCustomizer
 
     this._renderBottom();
 
+    // Initial Load
+    setTimeout(() => {
+      this._toggleCommandBar();
+    }, 100);
+
     this.context.application.navigatedEvent.add(this, () => {
+
       this._renderBottom();
+
+      setTimeout(() => {
+        this._toggleCommandBar();
+      }, 100);
+
     });
 
     return Promise.resolve();
   }
+
+  private _toggleCommandBar(): void {
+
+    const commandBar = document.getElementById('spCommandBar');
+
+    if (commandBar) {
+
+      commandBar.style.setProperty(
+        'display',
+        'none',
+        'important'
+      );
+    }
+  }
+
 
 
   /* ================= ICONS ================= */
@@ -52,12 +118,17 @@ export default class ApplicationCustomizerApplicationCustomizer
 
   /* ================= HIDE SHAREPOINT CHROME ================= */
   private _hideAppBar(): void {
+
     const style = document.createElement('style');
     style.innerHTML = `
       #spSiteHeader { display: none !important; }
       #sp-appBar { display: none !important; }
       .ms-HorizontalNav { margin-left: 0 !important; }
-      #spCommandBar { display: none !important; }
+     
+     #CommentsWrapper {display: none !important;}
+      
+    
+    
       #vpc_Page\\.SiteFooter\\.internal\\.03025612-a400-4804-a78e-e1493200a43b { display: none !important; }
       #CommentsWrapper { display: none !important; }
       #O365_MainLink_Settings {
@@ -187,11 +258,17 @@ export default class ApplicationCustomizerApplicationCustomizer
         SPPermission.manageWeb
       );
 
+    const canEditPage =
+      this.context.pageContext.web.permissions.hasPermission(
+        SPPermission.manageWeb
+      );
+
     /* ===== LIST / LIBRARY DETECTION ===== */
     const listContext = this.context.pageContext.list;
     const currentUrl = window.location.href.toLowerCase();
 
     let listSettingsHtml = '';
+
 
     const isListPage =
       currentUrl.indexOf('/lists/') !== -1 ||
@@ -217,6 +294,7 @@ export default class ApplicationCustomizerApplicationCustomizer
     </li>
   `;
     }
+
 
     /* ===== FETCH MENU DATA ===== */
     const buItems = await MenuService.getMenuItems(
@@ -257,16 +335,17 @@ export default class ApplicationCustomizerApplicationCustomizer
 
     /* ================= HEADER HTML ================= */
     this._top.domElement.innerHTML = `
+    
       <div class="${styles.topNav}">
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iconnect-final"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/iconnect"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/qa-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -313,7 +392,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/qa-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -333,6 +412,29 @@ export default class ApplicationCustomizerApplicationCustomizer
           </li>
 
           
+     <li class="${styles.menuItem} ${styles.askDiaMenu}">
+<a
+        href="https://dia.bpcl.in/"
+        target="_blank"
+        data-interception="off"
+        class="${styles.askDiaLink}"
+>
+<div class="${styles.askDiaContainer}">
+<div class="${styles.askDiaIcon}">
+<img
+                    src="${AskDiaImage}"
+                    alt="Ask DIA"
+                />
+</div>
+ 
+            <span class="${styles.askDiaText}">
+                Ask DIA
+</span>
+</div>
+</a>
+</li>
+
+          
 
           <!-- USER MENU -->
           <li class="${styles.menuItem} ${styles.rightMenu}">
@@ -343,16 +445,26 @@ export default class ApplicationCustomizerApplicationCustomizer
               
              ${listSettingsHtml}
               ${hasAdminAccess ? `
-           <li class="${styles.gearMenuItem}">
+              <li class="${styles.gearMenuItem}">
              <a class="${styles.gearMenuLink}" href="${settingsUrl}" target="_self" tabindex="0"> Settings</a>
-           </li>
+              </li>
 
-           <li class="${styles.gearMenuItem}"> <a class="${styles.gearMenuLink}" href="${siteContentsUrl}" target="_self" tabindex="0"> Site Contents </a>
-           </li>
+               <li class="${styles.gearMenuItem}"> <a class="${styles.gearMenuLink}" href="${siteContentsUrl}" target="_self" tabindex="0"> Site Contents </a>
+             </li>
+            
            
            ` : ''}
-           
+           ${canEditPage ? `
+            <li class="${styles.gearMenuItem}"><a id="customEditPage"class="${styles.gearMenuLink}"href="javascript:void(0)">Edit Page</a>
+            </li>
+          ` : ''}
+     
+     
+     
+  
 
+
+  
               <li class="${styles.gearMenuItem}">
                <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Help</a>
               </li>
@@ -365,6 +477,38 @@ export default class ApplicationCustomizerApplicationCustomizer
         </ul>
       </div>
     `;
+
+    const editPageBtn = document.getElementById('customEditPage');
+
+    if (editPageBtn) {
+
+      editPageBtn.addEventListener('click', () => {
+
+        const commandBar = document.getElementById('spCommandBar');
+
+        if (commandBar) {
+          commandBar.style.setProperty(
+            'display',
+            'flex',
+            'important'
+          );
+        }
+
+        setTimeout(() => {
+
+          const editButton = document.querySelector(
+            '[aria-label="Edit"]'
+          ) as HTMLElement;
+
+          editButton?.click();
+
+        }, 100);
+
+      });
+
+    }
+
+
   }
 
   /* ================= FOOTER ================= */

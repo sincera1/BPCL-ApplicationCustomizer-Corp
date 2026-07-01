@@ -73,15 +73,23 @@ export default class ApplicationCustomizerApplicationCustomizer
     // Initial Load
     setTimeout(() => {
       this._toggleCommandBar();
-    }, 100);
+    }, 50);
 
-    this.context.application.navigatedEvent.add(this, () => {
+    this.context.application.navigatedEvent.add(this, async () => {
+
+      // Recreate the top placeholder so menu visibility updates
+      if (this._top) {
+        this._top.dispose();
+        this._top = undefined;
+      }
+
+      await this._renderTop();
 
       this._renderBottom();
 
       setTimeout(() => {
         this._toggleCommandBar();
-      }, 100);
+      }, 50);
 
     });
 
@@ -171,71 +179,141 @@ export default class ApplicationCustomizerApplicationCustomizer
   /* ================= RENDER DROPDOWN HTML ================= */
 
 
+  // private _renderMenuHtml(menuTree: IMenuNode[]): string {
+
+  //   const renderItems = (items: IMenuNode[]) => items.map(parent => `
+  //   <li class="${styles.submenuItem}">
+
+  //     ${parent.children.length > 0
+  //       ? `
+  //         <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
+  //           ${parent.Title}
+  //           <i class="bi bi-caret-right-fill"></i>
+  //         </a>
+  //       `
+  //       : `
+  //         <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}" target="_blank" data-interception="off">
+  //           ${parent.Title}
+  //         </a>
+  //       `
+  //     }
+
+  //     ${parent.children.length > 0
+  //       ? `
+  //         <ul class="${styles.rightSubmenu}">
+  //           ${parent.children.map(child => `
+  //             <li>
+  //               <a href="${child.SiteURL?.Url || '#'}" target="_blank" data-interception="off" tabindex="0">
+  //                 ${child.Title}
+  //               </a>
+  //             </li>
+  //           `).join('')}
+  //         </ul>
+  //       `
+  //       : ''
+  //     }
+
+  //   </li>
+  // `).join('');
+
+  //   // ✅ If 10 or less → normal single column
+  //   if (menuTree.length <= 10) {
+  //     return renderItems(menuTree);
+  //   }
+
+  //   // ✅ If more than 10 → split into 2 columns (10 + remaining)
+  //   const firstColumn = menuTree.slice(0, 10);
+  //   const secondColumn = menuTree.slice(10);
+
+  //   return `
+  //   <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
+      
+  //     <div class="${styles.submenuWrapper}">
+        
+  //       <ul class="${styles.column}">
+  //         ${renderItems(firstColumn)}
+  //       </ul>
+
+  //       <ul class="${styles.column}">
+  //         ${renderItems(secondColumn)}
+  //       </ul>
+
+  //     </div>
+
+  //   </li>
+  // `;
+  // }
+
+
   private _renderMenuHtml(menuTree: IMenuNode[]): string {
-
-    const renderItems = (items: IMenuNode[]) => items.map(parent => `
+ 
+  const renderItems = (items: IMenuNode[]) => items.map(parent => `
     <li class="${styles.submenuItem}">
-
-      ${parent.children.length > 0
-        ? `
+ 
+      ${
+        parent.children.length > 0
+          ? `
           <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
             ${parent.Title}
             <i class="bi bi-caret-right-fill"></i>
           </a>
-        `
-        : `
-          <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}" target="_blank" data-interception="off">
+          `
+          : `
+          <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}"
+             target="_blank"
+             data-interception="off">
             ${parent.Title}
           </a>
-        `
+          `
       }
-
-      ${parent.children.length > 0
-        ? `
+ 
+      ${
+        parent.children.length > 0
+          ? `
           <ul class="${styles.rightSubmenu}">
             ${parent.children.map(child => `
               <li>
-                <a href="${child.SiteURL?.Url || '#'}" target="_blank" data-interception="off" tabindex="0">
+                <a href="${child.SiteURL?.Url || '#'}"
+                   target="_blank"
+                   data-interception="off">
                   ${child.Title}
                 </a>
               </li>
             `).join('')}
           </ul>
-        `
-        : ''
+          `
+          : ''
       }
-
+ 
     </li>
   `).join('');
-
-    // ✅ If 10 or less → normal single column
-    if (menuTree.length <= 10) {
-      return renderItems(menuTree);
-    }
-
-    // ✅ If more than 10 → split into 2 columns (10 + remaining)
-    const firstColumn = menuTree.slice(0, 10);
-    const secondColumn = menuTree.slice(10);
-
-    return `
+ 
+  // 10 items per column
+  const itemsPerColumn = 12;
+ 
+  const columns: IMenuNode[][] = [];
+ 
+  for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
+    columns.push(menuTree.slice(i, i + itemsPerColumn));
+  }
+ 
+  // If only one column
+  if (columns.length === 1) {
+    return renderItems(menuTree);
+  }
+ 
+  return `
     <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
-      
       <div class="${styles.submenuWrapper}">
-        
-        <ul class="${styles.column}">
-          ${renderItems(firstColumn)}
-        </ul>
-
-        <ul class="${styles.column}">
-          ${renderItems(secondColumn)}
-        </ul>
-
+        ${columns.map(col => `
+          <ul class="${styles.column}">
+            ${renderItems(col)}
+          </ul>
+        `).join('')}
       </div>
-
     </li>
   `;
-  }
-
+}
 
   /* ================= TOP NAV ================= */
   private async _renderTop(): Promise<void> {
@@ -263,9 +341,22 @@ export default class ApplicationCustomizerApplicationCustomizer
         SPPermission.manageWeb
       );
 
+    const currentUrl = window.location.href.toLowerCase();
+
+    const isDashboard =
+      currentUrl.indexOf("/sitepages/dashboard.aspx") !== -1;
+
+    const isSitePage =
+      currentUrl.indexOf("/sitepages/") > -1;
+
+    const showEditPage =
+      canEditPage &&
+      isSitePage &&
+      !isDashboard;
+
     /* ===== LIST / LIBRARY DETECTION ===== */
     const listContext = this.context.pageContext.list;
-    const currentUrl = window.location.href.toLowerCase();
+
 
     let listSettingsHtml = '';
 
@@ -454,16 +545,11 @@ export default class ApplicationCustomizerApplicationCustomizer
             
            
            ` : ''}
-           ${canEditPage ? `
-            <li class="${styles.gearMenuItem}"><a id="customEditPage"class="${styles.gearMenuLink}"href="javascript:void(0)">Edit Page</a>
+           ${showEditPage ? `
+            <li class="${styles.gearMenuItem}"><a id="customEditPage" class="${styles.gearMenuLink}"href="javascript:void(0)">Edit Page </a>
             </li>
-          ` : ''}
-     
-     
-     
-  
-
-
+            ` : ''}
+       
   
               <li class="${styles.gearMenuItem}">
                <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Help</a>

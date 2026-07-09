@@ -21,43 +21,6 @@ export default class ApplicationCustomizerApplicationCustomizer
 
 
 
-  // public async onInit(): Promise<void> {
-
-  //   Log.info('ApplicationCustomizer', 'Initialized');
-
-  //   this._hideAppBar();
-  //   this._loadBootstrapIcons();
-
-  //   await this._renderTop();
-
-  //   this._renderBottom();
-
-  //   // Show Command Bar only in Edit Mode
-  //   const toggleCommandBar = (): void => {
-
-  //     const commandBar = document.getElementById('spCommandBar');
-
-  //     if (commandBar) {
-
-  //       const isEditMode =
-  //         window.location.href.toLowerCase().indexOf('mode=edit') > -1;
-
-  //       commandBar.style.display = isEditMode ? 'flex' : 'none';
-  //     }
-  //   };
-
-  //   toggleCommandBar();
-
-  //   this.context.application.navigatedEvent.add(this, () => {
-
-  //     this._renderBottom();
-
-  //     toggleCommandBar();
-
-  //   });
-
-  //   return Promise.resolve();
-  // }
 
   public async onInit(): Promise<void> {
 
@@ -70,10 +33,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
     this._renderBottom();
 
-    // Initial Load
-    setTimeout(() => {
-      this._toggleCommandBar();
-    }, 50);
+
 
     this.context.application.navigatedEvent.add(this, async () => {
 
@@ -87,28 +47,13 @@ export default class ApplicationCustomizerApplicationCustomizer
 
       this._renderBottom();
 
-      setTimeout(() => {
-        this._toggleCommandBar();
-      }, 50);
+
 
     });
 
     return Promise.resolve();
   }
 
-  private _toggleCommandBar(): void {
-
-    const commandBar = document.getElementById('spCommandBar');
-
-    if (commandBar) {
-
-      commandBar.style.setProperty(
-        'display',
-        'none',
-        'important'
-      );
-    }
-  }
 
 
 
@@ -135,7 +80,9 @@ export default class ApplicationCustomizerApplicationCustomizer
      
      #CommentsWrapper {display: none !important;}
       
-    
+    #spCommandBar { 
+        display: none !important; 
+      }
     
       #vpc_Page\\.SiteFooter\\.internal\\.03025612-a400-4804-a78e-e1493200a43b { display: none !important; }
       #CommentsWrapper { display: none !important; }
@@ -178,87 +125,19 @@ export default class ApplicationCustomizerApplicationCustomizer
 
   /* ================= RENDER DROPDOWN HTML ================= */
 
-
-  // private _renderMenuHtml(menuTree: IMenuNode[]): string {
-
-  //   const renderItems = (items: IMenuNode[]) => items.map(parent => `
-  //   <li class="${styles.submenuItem}">
-
-  //     ${parent.children.length > 0
-  //       ? `
-  //         <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
-  //           ${parent.Title}
-  //           <i class="bi bi-caret-right-fill"></i>
-  //         </a>
-  //       `
-  //       : `
-  //         <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}" target="_blank" data-interception="off">
-  //           ${parent.Title}
-  //         </a>
-  //       `
-  //     }
-
-  //     ${parent.children.length > 0
-  //       ? `
-  //         <ul class="${styles.rightSubmenu}">
-  //           ${parent.children.map(child => `
-  //             <li>
-  //               <a href="${child.SiteURL?.Url || '#'}" target="_blank" data-interception="off" tabindex="0">
-  //                 ${child.Title}
-  //               </a>
-  //             </li>
-  //           `).join('')}
-  //         </ul>
-  //       `
-  //       : ''
-  //     }
-
-  //   </li>
-  // `).join('');
-
-  //   // ✅ If 10 or less → normal single column
-  //   if (menuTree.length <= 10) {
-  //     return renderItems(menuTree);
-  //   }
-
-  //   // ✅ If more than 10 → split into 2 columns (10 + remaining)
-  //   const firstColumn = menuTree.slice(0, 10);
-  //   const secondColumn = menuTree.slice(10);
-
-  //   return `
-  //   <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
-      
-  //     <div class="${styles.submenuWrapper}">
-        
-  //       <ul class="${styles.column}">
-  //         ${renderItems(firstColumn)}
-  //       </ul>
-
-  //       <ul class="${styles.column}">
-  //         ${renderItems(secondColumn)}
-  //       </ul>
-
-  //     </div>
-
-  //   </li>
-  // `;
-  // }
-
-
   private _renderMenuHtml(menuTree: IMenuNode[]): string {
- 
-  const renderItems = (items: IMenuNode[]) => items.map(parent => `
+
+    const renderItems = (items: IMenuNode[]) => items.map(parent => `
     <li class="${styles.submenuItem}">
  
-      ${
-        parent.children.length > 0
-          ? `
+      ${parent.children.length > 0
+        ? `
           <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
             ${parent.Title}
             <i class="bi bi-caret-right-fill"></i>
           </a>
           `
-          : `
+        : `
           <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}"
              target="_blank"
              data-interception="off">
@@ -267,9 +146,8 @@ export default class ApplicationCustomizerApplicationCustomizer
           `
       }
  
-      ${
-        parent.children.length > 0
-          ? `
+      ${parent.children.length > 0
+        ? `
           <ul class="${styles.rightSubmenu}">
             ${parent.children.map(child => `
               <li>
@@ -282,27 +160,27 @@ export default class ApplicationCustomizerApplicationCustomizer
             `).join('')}
           </ul>
           `
-          : ''
+        : ''
       }
  
     </li>
   `).join('');
- 
-  // 10 items per column
-  const itemsPerColumn = 12;
- 
-  const columns: IMenuNode[][] = [];
- 
-  for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
-    columns.push(menuTree.slice(i, i + itemsPerColumn));
-  }
- 
-  // If only one column
-  if (columns.length === 1) {
-    return renderItems(menuTree);
-  }
- 
-  return `
+
+    // 10 items per column
+    const itemsPerColumn = 12;
+
+    const columns: IMenuNode[][] = [];
+
+    for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
+      columns.push(menuTree.slice(i, i + itemsPerColumn));
+    }
+
+    // If only one column
+    if (columns.length === 1) {
+      return renderItems(menuTree);
+    }
+
+    return `
     <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
       <div class="${styles.submenuWrapper}">
         ${columns.map(col => `
@@ -313,7 +191,7 @@ export default class ApplicationCustomizerApplicationCustomizer
       </div>
     </li>
   `;
-}
+  }
 
   /* ================= TOP NAV ================= */
   private async _renderTop(): Promise<void> {
@@ -342,9 +220,18 @@ export default class ApplicationCustomizerApplicationCustomizer
       );
 
     const currentUrl = window.location.href.toLowerCase();
+    const siteUrl = this.context.pageContext.web.absoluteUrl.toLowerCase();
 
     const isDashboard =
-      currentUrl.indexOf("/sitepages/dashboard.aspx") !== -1;
+
+
+      // Dashboard as home page
+      currentUrl === siteUrl ||
+      currentUrl === siteUrl + "/" ||
+      currentUrl.indexOf("/sitepages/dashboard.aspx") !== -1 ||
+      currentUrl.indexOf("/sitepages/viewallnews.aspx") !== -1 ||
+      currentUrl.indexOf("/sitepages/viewallbroadcast.aspx") !== -1 ||
+      currentUrl.indexOf("/sitepages/viewallevents.aspx") !== -1;
 
     const isSitePage =
       currentUrl.indexOf("/sitepages/") > -1;
@@ -431,12 +318,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/iconnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -483,7 +370,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -570,15 +457,18 @@ export default class ApplicationCustomizerApplicationCustomizer
 
       editPageBtn.addEventListener('click', () => {
 
-        const commandBar = document.getElementById('spCommandBar');
 
-        if (commandBar) {
-          commandBar.style.setProperty(
-            'display',
-            'flex',
-            'important'
-          );
-        }
+        // remove css hiding
+        const style = document.createElement('style');
+
+        style.innerHTML = `
+      #spCommandBar {
+        display: flex !important;
+      }
+    `;
+
+        document.head.appendChild(style);
+
 
         setTimeout(() => {
 
@@ -588,7 +478,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
           editButton?.click();
 
-        }, 100);
+        }, 300);
 
       });
 

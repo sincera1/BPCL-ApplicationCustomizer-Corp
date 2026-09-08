@@ -18,10 +18,20 @@ export interface IMenuItem {
   ParentIDId?: number;
 }
 
+interface ITeamSiteMasterItemResponse {
+  Id: number;
+  TeamName: string;
+  SiteURL?: {
+    Url: string;
+    Description?: string;
+  };
+}
+
+
 export default class MenuService {
 
 
-  private static HUB_SITE = "/sites/iconnect-corporate-publishing-hub";
+  private static HUB_SITE = "/sites/dev-corporate-publishing-hub";
 
   //  Dynamic base URL (tenant comes automatically)
   private static getBaseUrl(): string {
@@ -62,5 +72,40 @@ export default class MenuService {
       SiteURL: item.SiteURL,
       ParentIDId: item.ParentID?.Id
     }));
+  }
+
+
+  public static async getTeamSiteUrl(
+    teamName: string,
+    spHttpClient: SPHttpClient
+  ): Promise<string> {
+
+    const baseUrl = this.getBaseUrl();
+
+    const url =
+      `${baseUrl}/_api/web/lists/getbytitle('TeamSiteMaster')/items` +
+      `?$select=Id,TeamName,SiteURL` +
+      `&$filter=TeamName eq '${teamName.replace(/'/g, "''")}'`;
+
+    const response = await spHttpClient.get(
+      url,
+      SPHttpClient.configurations.v1
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Something went wrong while getting Team Site information."
+      );
+    }
+
+    const data: {
+      value: ITeamSiteMasterItemResponse[];
+    } = await response.json();
+
+    if (!data.value || data.value.length === 0) {
+      return "";
+    }
+
+    return data.value[0].SiteURL?.Url || "";
   }
 }

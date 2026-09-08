@@ -18,7 +18,8 @@ export default class ApplicationCustomizerApplicationCustomizer
 
   private _top: PlaceholderContent | undefined;
 
-
+  private _currentUserSBU: string = "";
+  private _sbuPromise: Promise<string> | undefined;
 
 
 
@@ -33,7 +34,11 @@ export default class ApplicationCustomizerApplicationCustomizer
 
     this._renderBottom();
 
+    this._sbuPromise = this.getCurrentUserSBUFromGraph();
 
+    this._sbuPromise.then((sbu) => {
+      this._currentUserSBU = sbu;
+    });
 
     this.context.application.navigatedEvent.add(this, async () => {
 
@@ -69,6 +74,30 @@ export default class ApplicationCustomizerApplicationCustomizer
     document.head.appendChild(link);
   }
 
+  public async getCurrentUserSBUFromGraph(): Promise<string> {
+    try {
+      const client = await this.context.msGraphClientFactory.getClient("3");
+
+      const user = await client
+        .api("/me?$select=onPremisesExtensionAttributes")
+        .get();
+
+      return (
+        user?.onPremisesExtensionAttributes
+          ?.extensionAttribute4
+          ?.trim() || ""
+      );
+
+    } catch (error) {
+      console.error(
+        "ApplicationCustomizer.getCurrentUserSBUFromGraph",
+        error
+      );
+
+      return "";
+    }
+  }
+
   /* ================= HIDE SHAREPOINT CHROME ================= */
   private _hideAppBar(): void {
 
@@ -93,43 +122,154 @@ export default class ApplicationCustomizerApplicationCustomizer
        #spLeftNav {
       display: none !important;
     }
+
+     
+    [data-automationid="appHeaderBar"] {
+      display: none !important;
+    }
     
     `;
     document.head.appendChild(style);
   }
 
-  /* ================= BUILD LEVEL 0 → LEVEL 1 TREE ================= */
-  private _buildMenuTree(items: IMenuItem[], category: string): IMenuNode[] {
+
+
+
+
+  /* ================= BUILD LEVEL 0 → LEVEL 1 → LEVEL 2 TREE ================= */
+
+  private _buildMenuTree(
+    items: IMenuItem[],
+    category: string
+  ): IMenuNode[] {
 
     const parents = items.filter(
-      i => i.Level === 0 && i.Category === category
+      item =>
+        item.Level === 0 &&
+        item.Category === category
     );
 
     return parents.map(parent => ({
+
       Id: parent.Id,
+
       Title: parent.Title,
+
       SiteURL: parent.SiteURL,
+
       children: items
-        .filter(child =>
-          child.Level === 1 &&
-          child.ParentIDId === parent.Id
+        .filter(
+          child =>
+            child.Level === 1 &&
+            child.ParentIDId === parent.Id
         )
         .map(child => ({
+
           Id: child.Id,
+
           Title: child.Title,
+
           SiteURL: child.SiteURL,
-          children: []
+
+          children: items
+            .filter(
+              subChild =>
+                subChild.Level === 2 &&
+                subChild.ParentIDId === child.Id
+            )
+            .map(subChild => ({
+
+              Id: subChild.Id,
+
+              Title: subChild.Title,
+
+              SiteURL: subChild.SiteURL,
+
+              children: []
+
+            }))
+
         }))
+
     }));
   }
 
   /* ================= RENDER DROPDOWN HTML ================= */
 
+  // private _renderMenuHtml(menuTree: IMenuNode[]): string {
+
+  //   const renderItems = (items: IMenuNode[]) => items.map(parent => `
+  //   <li class="${styles.submenuItem}">
+
+  //     ${parent.children.length > 0
+  //       ? `
+  //         <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
+  //           ${parent.Title}
+  //           <i class="bi bi-caret-right-fill"></i>
+  //         </a>
+  //         `
+  //       : `
+  //         <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}"
+  //            target="_blank"
+  //            data-interception="off">
+  //           ${parent.Title}
+  //         </a>
+  //         `
+  //     }
+
+  //     ${parent.children.length > 0
+  //       ? `
+  //         <ul class="${styles.rightSubmenu}">
+  //           ${parent.children.map(child => `
+  //             <li>
+  //               <a href="${child.SiteURL?.Url || '#'}"
+  //                  target="_blank"
+  //                  data-interception="off">
+  //                 ${child.Title}
+  //               </a>
+  //             </li>
+  //           `).join('')}
+  //         </ul>
+  //         `
+  //       : ''
+  //     }
+
+  //   </li>
+  // `).join('');
+
+  //   // 10 items per column
+  //   const itemsPerColumn = 12;
+
+  //   const columns: IMenuNode[][] = [];
+
+  //   for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
+  //     columns.push(menuTree.slice(i, i + itemsPerColumn));
+  //   }
+
+  //   // If only one column
+  //   if (columns.length === 1) {
+  //     return renderItems(menuTree);
+  //   }
+
+  //   return `
+  //   <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
+  //     <div class="${styles.submenuWrapper}">
+  //       ${columns.map(col => `
+  //         <ul class="${styles.column}">
+  //           ${renderItems(col)}
+  //         </ul>
+  //       `).join('')}
+  //     </div>
+  //   </li>
+  // `;
+  // }
+
   private _renderMenuHtml(menuTree: IMenuNode[]): string {
 
     const renderItems = (items: IMenuNode[]) => items.map(parent => `
+
     <li class="${styles.submenuItem}">
- 
+
       ${parent.children.length > 0
         ? `
           <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
@@ -138,57 +278,118 @@ export default class ApplicationCustomizerApplicationCustomizer
           </a>
           `
         : `
-          <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}"
+          <a class="${styles.submenuLink}"
+             href="${parent.SiteURL?.Url || '#'}"
              target="_blank"
              data-interception="off">
             ${parent.Title}
           </a>
           `
       }
- 
+
       ${parent.children.length > 0
         ? `
           <ul class="${styles.rightSubmenu}">
+
             ${parent.children.map(child => `
-              <li>
-                <a href="${child.SiteURL?.Url || '#'}"
-                   target="_blank"
-                   data-interception="off">
-                  ${child.Title}
-                </a>
+
+              <li class="${styles.submenuItem}">
+
+                ${child.children.length > 0
+            ? `
+                    <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
+                      ${child.Title}
+                      <i class="bi bi-caret-right-fill"></i>
+                    </a>
+                    `
+            : `
+                    <a class="${styles.submenuLink}"
+                       href="${child.SiteURL?.Url || '#'}"
+                       target="_blank"
+                       data-interception="off">
+                      ${child.Title}
+                    </a>
+                    `
+          }
+
+                ${child.children.length > 0
+            ? `
+                    <ul class="${styles.rightSubmenu}">
+
+                      ${child.children.map(subChild => `
+
+                        <li>
+
+                          <a href="${subChild.SiteURL?.Url || '#'}"
+                             target="_blank"
+                             data-interception="off">
+
+                            ${subChild.Title}
+
+                          </a>
+
+                        </li>
+
+                      `).join('')}
+
+                    </ul>
+                    `
+            : ''
+          }
+
               </li>
+
             `).join('')}
+
           </ul>
           `
         : ''
       }
- 
+
     </li>
+
   `).join('');
 
-    // 10 items per column
+
+    // 12 items per column
     const itemsPerColumn = 12;
 
     const columns: IMenuNode[][] = [];
 
     for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
-      columns.push(menuTree.slice(i, i + itemsPerColumn));
+
+      columns.push(
+        menuTree.slice(i, i + itemsPerColumn)
+      );
+
     }
+
 
     // If only one column
     if (columns.length === 1) {
+
       return renderItems(menuTree);
+
     }
+
 
     return `
     <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
+
       <div class="${styles.submenuWrapper}">
+
         ${columns.map(col => `
+
           <ul class="${styles.column}">
+
             ${renderItems(col)}
+
           </ul>
+
         `).join('')}
+
       </div>
+
     </li>
   `;
   }
@@ -318,12 +519,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/iconnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -389,6 +590,14 @@ export default class ApplicationCustomizerApplicationCustomizer
             </ul>
           </li>
 
+          <!-- My Team -->
+        <li class="${styles.menuItem}">
+       <a  class="${styles.link}"  href="#"  tabindex="0" id="myTeamMenu">
+  
+        <i class="bi bi-people-fill"></i> My Team
+        </a>
+        </li>
+
           
      <li class="${styles.menuItem} ${styles.askDiaMenu}">
 <a
@@ -439,10 +648,10 @@ export default class ApplicationCustomizerApplicationCustomizer
        
   
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Help</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/User_Guide.aspx" target="_blank"  data-interception="off" tabindex="0">Help</a>
               </li>
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="#" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/Feedback.aspx" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
               </li>
             </ul>
           </li>
@@ -451,7 +660,28 @@ export default class ApplicationCustomizerApplicationCustomizer
       </div>
     `;
 
+    const myTeamMenu = document.getElementById("myTeamMenu");
+
+    if (myTeamMenu) {
+      myTeamMenu.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        if (!this._currentUserSBU && this._sbuPromise) {
+          this._currentUserSBU = await this._sbuPromise;
+        }
+
+        const sbu = this._currentUserSBU;
+
+        // If SBU is not available, do nothing
+        if (!sbu) {
+          return;
+        }
+
+        // My Team logic will continue here
+      });
+    }
     const editPageBtn = document.getElementById('customEditPage');
+
 
     if (editPageBtn) {
 
@@ -509,8 +739,17 @@ export default class ApplicationCustomizerApplicationCustomizer
       </div>
       <div class="${styles.footerRight}">
         
-        <a href="#">Feedback</a>
-        <a href="#">Help</a>
+        <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/Feedback.aspx"
+        target="_blank"
+        data-interception="off"
+        rel="noopener noreferrer">
+        Feedback
+        </a>
+        <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/User_Guide.aspx"
+        target="_blank"
+        data-interception="off"
+        rel="noopener noreferrer"
+        >Help</a>
       </div>
     </div>
   `;

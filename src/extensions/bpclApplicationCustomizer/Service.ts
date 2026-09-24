@@ -5,6 +5,7 @@ interface IMenuMasterListItemResponse {
   Title: string;
   Category: string;
   Level: number;
+  Created: string;
   SiteURL?: { Url: string };
   ParentID?: { Id: number };
 }
@@ -14,6 +15,7 @@ export interface IMenuItem {
   Title: string;
   Category: string;
   Level: number;
+  Created: string;
   SiteURL?: { Url: string };
   ParentIDId?: number;
 }
@@ -47,7 +49,7 @@ export default class MenuService {
 
     const url =
       `${baseUrl}/_api/web/lists/getbytitle('MenuMasterList')/items` +
-      `?$select=Id,Title,Category,Level,SiteURL,ParentID/Id` +
+      `?$select=Id,Title,Category,Level,Created,SiteURL,ParentID/Id` +
       `&$expand=ParentID` +
       `&$filter=Category eq '${category}'` +
       `&$orderby=Level,Title`;
@@ -69,6 +71,7 @@ export default class MenuService {
       Title: item.Title,
       Category: item.Category,
       Level: item.Level,
+      Created: item.Created,  
       SiteURL: item.SiteURL,
       ParentIDId: item.ParentID?.Id
     }));

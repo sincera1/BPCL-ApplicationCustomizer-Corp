@@ -9,7 +9,9 @@ import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '
 interface IMenuNode {
   Id: number;
   Title: string;
+  Created: string;
   SiteURL?: { Url: string };
+  isNew: boolean;
   children: IMenuNode[];
 }
 
@@ -143,128 +145,86 @@ export default class ApplicationCustomizerApplicationCustomizer
     category: string
   ): IMenuNode[] {
 
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const isNewItem = (created: string): boolean => {
+      if (!created) {
+        return false;
+      }
+
+      const createdDate = new Date(created);
+
+      return createdDate >= sevenDaysAgo;
+    };
+
     const parents = items.filter(
       item =>
         item.Level === 0 &&
         item.Category === category
     );
 
-    return parents.map(parent => ({
+    return parents.map(parent => {
 
-      Id: parent.Id,
-
-      Title: parent.Title,
-
-      SiteURL: parent.SiteURL,
-
-      children: items
+      const parentChildren = items
         .filter(
           child =>
             child.Level === 1 &&
             child.ParentIDId === parent.Id
         )
-        .map(child => ({
+        .map(child => {
 
-          Id: child.Id,
-
-          Title: child.Title,
-
-          SiteURL: child.SiteURL,
-
-          children: items
+          const childSubChildren = items
             .filter(
               subChild =>
                 subChild.Level === 2 &&
                 subChild.ParentIDId === child.Id
             )
             .map(subChild => ({
-
               Id: subChild.Id,
-
               Title: subChild.Title,
-
               SiteURL: subChild.SiteURL,
-
+              Created: subChild.Created,
+              isNew: isNewItem(subChild.Created),
               children: []
+            }));
 
-            }))
+          return {
+            Id: child.Id,
+            Title: child.Title,
+            SiteURL: child.SiteURL,
+            Created: child.Created,
+            isNew:
+              isNewItem(child.Created) ||
+              childSubChildren.some(subChild => subChild.isNew),
+            children: childSubChildren
+          };
+        });
 
-        }))
-
-    }));
+      return {
+        Id: parent.Id,
+        Title: parent.Title,
+        SiteURL: parent.SiteURL,
+        Created: parent.Created,
+        isNew:
+          isNewItem(parent.Created) ||
+          parentChildren.some(child => child.isNew),
+        children: parentChildren
+      };
+    });
   }
 
   /* ================= RENDER DROPDOWN HTML ================= */
 
-  // private _renderMenuHtml(menuTree: IMenuNode[]): string {
 
-  //   const renderItems = (items: IMenuNode[]) => items.map(parent => `
-  //   <li class="${styles.submenuItem}">
-
-  //     ${parent.children.length > 0
-  //       ? `
-  //         <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
-  //           ${parent.Title}
-  //           <i class="bi bi-caret-right-fill"></i>
-  //         </a>
-  //         `
-  //       : `
-  //         <a class="${styles.submenuLink}" href="${parent.SiteURL?.Url || '#'}"
-  //            target="_blank"
-  //            data-interception="off">
-  //           ${parent.Title}
-  //         </a>
-  //         `
-  //     }
-
-  //     ${parent.children.length > 0
-  //       ? `
-  //         <ul class="${styles.rightSubmenu}">
-  //           ${parent.children.map(child => `
-  //             <li>
-  //               <a href="${child.SiteURL?.Url || '#'}"
-  //                  target="_blank"
-  //                  data-interception="off">
-  //                 ${child.Title}
-  //               </a>
-  //             </li>
-  //           `).join('')}
-  //         </ul>
-  //         `
-  //       : ''
-  //     }
-
-  //   </li>
-  // `).join('');
-
-  //   // 10 items per column
-  //   const itemsPerColumn = 12;
-
-  //   const columns: IMenuNode[][] = [];
-
-  //   for (let i = 0; i < menuTree.length; i += itemsPerColumn) {
-  //     columns.push(menuTree.slice(i, i + itemsPerColumn));
-  //   }
-
-  //   // If only one column
-  //   if (columns.length === 1) {
-  //     return renderItems(menuTree);
-  //   }
-
-  //   return `
-  //   <li class="${styles.submenuItem} ${styles.submenuColumnsWrapper}">
-  //     <div class="${styles.submenuWrapper}">
-  //       ${columns.map(col => `
-  //         <ul class="${styles.column}">
-  //           ${renderItems(col)}
-  //         </ul>
-  //       `).join('')}
-  //     </div>
-  //   </li>
-  // `;
-  // }
 
   private _renderMenuHtml(menuTree: IMenuNode[]): string {
+
+    const renderNewBadge = (isNew: boolean): string => {
+      return isNew
+        ? `<span class="${styles.newBadge}">NEW</span>`
+        : '';
+    };
 
     const renderItems = (items: IMenuNode[]) => items.map(parent => `
 
@@ -273,18 +233,25 @@ export default class ApplicationCustomizerApplicationCustomizer
       ${parent.children.length > 0
         ? `
           <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
-            ${parent.Title}
+            <span>
+              ${parent.Title}
+              ${renderNewBadge(parent.isNew)}
+            </span>
+
             <i class="bi bi-caret-right-fill"></i>
           </a>
-          `
+        `
         : `
           <a class="${styles.submenuLink}"
              href="${parent.SiteURL?.Url || '#'}"
              target="_blank"
              data-interception="off">
+
             ${parent.Title}
+            ${renderNewBadge(parent.isNew)}
+
           </a>
-          `
+        `
       }
 
       ${parent.children.length > 0
@@ -298,18 +265,27 @@ export default class ApplicationCustomizerApplicationCustomizer
                 ${child.children.length > 0
             ? `
                     <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
-                      ${child.Title}
+
+                      <span>
+                        ${child.Title}
+                        ${renderNewBadge(child.isNew)}
+                      </span>
+
                       <i class="bi bi-caret-right-fill"></i>
+
                     </a>
-                    `
+                  `
             : `
                     <a class="${styles.submenuLink}"
                        href="${child.SiteURL?.Url || '#'}"
                        target="_blank"
                        data-interception="off">
+
                       ${child.Title}
+                      ${renderNewBadge(child.isNew)}
+
                     </a>
-                    `
+                  `
           }
 
                 ${child.children.length > 0
@@ -325,6 +301,7 @@ export default class ApplicationCustomizerApplicationCustomizer
                              data-interception="off">
 
                             ${subChild.Title}
+                            ${renderNewBadge(subChild.isNew)}
 
                           </a>
 
@@ -333,7 +310,7 @@ export default class ApplicationCustomizerApplicationCustomizer
                       `).join('')}
 
                     </ul>
-                    `
+                  `
             : ''
           }
 
@@ -342,7 +319,7 @@ export default class ApplicationCustomizerApplicationCustomizer
             `).join('')}
 
           </ul>
-          `
+        `
         : ''
       }
 
@@ -495,6 +472,35 @@ export default class ApplicationCustomizerApplicationCustomizer
       'AppLinks',
       this.context.spHttpClient
     );
+
+    const isNewWithin7Days = (created: string): boolean => {
+      if (!created) {
+        return false;
+      }
+
+      const createdDate = new Date(created);
+      const sevenDaysAgo = new Date();
+
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      return createdDate >= sevenDaysAgo;
+    };
+
+    const hasNewBU = buItems.some(item =>
+      isNewWithin7Days(item.Created)
+    );
+
+    const hasNewEntity = entityItems.some(item =>
+      isNewWithin7Days(item.Created)
+    );
+
+    const hasNewCorporate = corporateItems.some(item =>
+      isNewWithin7Days(item.Created)
+    );
+
+    const hasNewAppLinks = appLinksItems.some(item =>
+      isNewWithin7Days(item.Created)
+    );
     /* ===== BUILD HTML ===== */
     const buHtml = this._renderMenuHtml(
       this._buildMenuTree(buItems, 'BU')
@@ -539,6 +545,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <li class="${styles.menuItem} ${styles.dropdown}">
             <a class="${styles.link}" href="#" tabindex="0">
               <i class="bi bi-building-fill"></i> Business Units
+              ${hasNewBU ? `<span class="${styles.newBadge}">NEW</span>` : ''}
               <i class="bi bi-caret-down-fill ${styles.dropdownIcon}"></i>
             </a>
             <ul class="${styles.submenu}">
@@ -550,6 +557,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <li class="${styles.menuItem} ${styles.dropdown}">
             <a class="${styles.link}" href="#" tabindex="0">
               <i class="bi bi-stack"></i> Entities
+              ${hasNewEntity ? `<span class="${styles.newBadge}">NEW</span>` : ''}
               <i class="bi bi-caret-down-fill ${styles.dropdownIcon}"></i>
             </a>
             <ul class="${styles.submenu}">
@@ -561,6 +569,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <li class="${styles.menuItem} ${styles.dropdown}">
             <a class="${styles.link}" href="#" tabindex="0">
               <i class="bi bi-file-earmark-post"></i> Corporate Policies
+              ${hasNewCorporate ? `<span class="${styles.newBadge}">NEW</span>` : ''}
               <i class="bi bi-caret-down-fill ${styles.dropdownIcon}"></i>
             </a>
             <ul class="${styles.submenu}">
@@ -583,6 +592,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <li class="${styles.menuItem} ${styles.dropdown}">
             <a class="${styles.link}" href="#" tabindex="0">
               <i class="bi bi-folder-symlink-fill"></i> Applications & Links
+              ${hasNewAppLinks ? `<span class="${styles.newBadge}">NEW</span>` : ''}
               <i class="bi bi-caret-down-fill ${styles.dropdownIcon}"></i>
             </a>
             <ul class="${styles.submenu}">
@@ -597,6 +607,7 @@ export default class ApplicationCustomizerApplicationCustomizer
         <i class="bi bi-people-fill"></i> My Team
         </a>
         </li>
+        
 
           
      <li class="${styles.menuItem} ${styles.askDiaMenu}">

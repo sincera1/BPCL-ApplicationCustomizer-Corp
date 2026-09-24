@@ -704,3 +704,50 @@
     margin: 0 !important;
   }
 }
+
+
+.newMenuItem {
+  position: relative;
+}
+ 
+.newBadge {
+  display: inline-block;
+  margin-left: -4px;
+  padding: 3px 6px;
+  background: linear-gradient(
+    90deg, #0b3d9e, #1d4faf 35%, #6b7473 65%, #c9a62a 85%, #ffc400
+  );
+  color: #fff;
+  font-size: 6px;
+  font-weight: 700;
+  border-radius: 6px 0 6px 0;
+  position: absolute;
+  overflow: hidden;
+  top: -4px;
+}
+ 
+.newBadge::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 70%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: skewX(-25deg);
+  animation: newBadgeSweep 2.2s ease-in-out infinite;
+}
+ 
+@keyframes newBadgeSweep {
+  0% {
+    left: -120%;
+  }
+ 
+  60% {
+    left: 150%;
+  }
+ 
+  100% {
+    left: 150%;
+  }
+}

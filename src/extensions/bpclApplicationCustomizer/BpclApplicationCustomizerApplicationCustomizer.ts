@@ -233,9 +233,12 @@ export default class ApplicationCustomizerApplicationCustomizer
       ${parent.children.length > 0
         ? `
           <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
+          <span class="d-flex align-items-center">
             <span>
+
               ${parent.Title}
               ${renderNewBadge(parent.isNew)}
+            </span>
             </span>
 
             <i class="bi bi-caret-right-fill"></i>
@@ -265,12 +268,12 @@ export default class ApplicationCustomizerApplicationCustomizer
                 ${child.children.length > 0
             ? `
                     <a class="${styles.submenuLink} d-flex align-items-center justify-content-between">
-
+                    <span class="d-flex align-items-center">
                       <span>
                         ${child.Title}
                         ${renderNewBadge(child.isNew)}
                       </span>
-
+                    </span>
                       <i class="bi bi-caret-right-fill"></i>
 
                     </a>

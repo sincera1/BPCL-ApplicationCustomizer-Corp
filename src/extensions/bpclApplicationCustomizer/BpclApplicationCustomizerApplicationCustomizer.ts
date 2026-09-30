@@ -3,6 +3,9 @@ import styles from './BpclApplicationCustomizer.module.scss';
 import MenuService, { IMenuItem } from './Service';
 import { SPPermission } from '@microsoft/sp-page-context';
 import AskDiaImage from './assets/AskDia.png';
+import eoffice from './assets/eOffice.png';
+import bitss from './assets/bitss.png';
+import myportal from './assets/myportal.png';
 
 import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '@microsoft/sp-application-base';
 
@@ -528,12 +531,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/qa-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -583,7 +586,7 @@ export default class ApplicationCustomizerApplicationCustomizer
           <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -614,6 +617,8 @@ export default class ApplicationCustomizerApplicationCustomizer
 
           
      <li class="${styles.menuItem} ${styles.askDiaMenu}">
+
+     
 <a
         href="https://dia.bpcl.in/"
         target="_blank"
@@ -633,6 +638,24 @@ export default class ApplicationCustomizerApplicationCustomizer
 </span>
 </div>
 </a>
+</li>
+
+<li>
+ <div class="d-flex">
+ 
+     <a href="https://eoffice.bpcl.in/cas/login?service=https%3A%2F%2Feoffice.bpcl.in%2Flogin.php" target="_blank" rel="noopener noreferrer">
+  <img src="${eoffice}" class="${styles.menuequicklinksIcon}" alt="eoffice" />
+  </a>
+ 
+   <a href="https://bpwebapps.corp.bharatpetroleum.com/BITSS?utm_source=sp&utm_medium=nb"  target="_blank" rel="noopener noreferrer">
+  <img src="${bitss}" class="${styles.menuequicklinksIcon}" alt="bitss" />
+  </a>
+ 
+  <a href="https://ep.corp.bharatpetroleum.com/irj/portal#Shell-home"  target="_blank" rel="noopener noreferrer">
+  <img src="${myportal}" class="${styles.menuequicklinksIcon}" alt="myportal" />
+  </a>
+   
+</div>
 </li>
 
           
@@ -662,10 +685,10 @@ export default class ApplicationCustomizerApplicationCustomizer
        
   
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/User_Guide.aspx" target="_blank"  data-interception="off" tabindex="0">Help</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/User_Guide.aspx" target="_blank"  data-interception="off" tabindex="0">Help</a>
               </li>
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/Feedback.aspx" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/Feedback.aspx" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
               </li>
             </ul>
           </li>
@@ -680,18 +703,34 @@ export default class ApplicationCustomizerApplicationCustomizer
       myTeamMenu.addEventListener("click", async (event) => {
         event.preventDefault();
 
-        if (!this._currentUserSBU && this._sbuPromise) {
-          this._currentUserSBU = await this._sbuPromise;
+        try {
+          
+          if (!this._currentUserSBU && this._sbuPromise) {
+            this._currentUserSBU = await this._sbuPromise;
+          }
+
+          const sbu = this._currentUserSBU?.trim();
+
+
+          if (!sbu) {
+            return;
+          }
+          const teamSiteUrl = await MenuService.getTeamSiteUrl(
+            sbu,
+            this.context.spHttpClient
+          );
+
+          if (!teamSiteUrl) {
+            
+            return;
+          }
+
+          // Navigate to Team Site
+         window.open(teamSiteUrl, "_blank", "noopener,noreferrer");
+
+        } catch (error) {
+          // Do nothing
         }
-
-        const sbu = this._currentUserSBU;
-
-        // If SBU is not available, do nothing
-        if (!sbu) {
-          return;
-        }
-
-        // My Team logic will continue here
       });
     }
     const editPageBtn = document.getElementById('customEditPage');
@@ -753,13 +792,13 @@ export default class ApplicationCustomizerApplicationCustomizer
       </div>
       <div class="${styles.footerRight}">
         
-        <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/Feedback.aspx"
+        <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/Feedback.aspx"
         target="_blank"
         data-interception="off"
         rel="noopener noreferrer">
         Feedback
         </a>
-        <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/User_Guide.aspx"
+        <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/User_Guide.aspx"
         target="_blank"
         data-interception="off"
         rel="noopener noreferrer"

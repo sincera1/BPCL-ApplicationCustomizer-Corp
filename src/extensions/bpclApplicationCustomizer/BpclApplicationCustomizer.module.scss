@@ -48,13 +48,13 @@
   display: flex;
   min-width: 0;
   flex: 1;
-  margin-left: 20px;
+  // margin-left: 20px;
   align-items: center;
 }
 
 .menuItem {
   position: relative;
-  padding: 6px 12px;
+  padding: 6px 10px;
   color: #fff;
   cursor: pointer;
 }
@@ -368,7 +368,7 @@
   }
 
   .menuItem {
-    padding: 6px 6x;
+    padding: 6px 10px;
     font-size: 13px;
   }
 }
@@ -390,7 +390,7 @@
   }
 
   .menuItem {
-    padding: 6px 12px;
+    padding: 6px 10px;
     position: relative;
   }
 
@@ -765,4 +765,12 @@
   position: relative;
   overflow: hidden;
   top: -6px;
+}
+
+.menuequicklinksIcon{
+  border-radius: 5px;
+  padding: 2px;
+  margin-right: 5px;
+  height: 28px;
+  width: 28px;
 }

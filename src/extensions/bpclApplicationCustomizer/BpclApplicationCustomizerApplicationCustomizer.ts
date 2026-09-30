@@ -6,6 +6,7 @@ import AskDiaImage from './assets/AskDia.png';
 import eoffice from './assets/eOffice.png';
 import bitss from './assets/bitss.png';
 import myportal from './assets/myportal.png';
+import myteam from './assets/myteam.png'
 
 import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '@microsoft/sp-application-base';
 
@@ -606,25 +607,14 @@ export default class ApplicationCustomizerApplicationCustomizer
             </ul>
           </li>
 
-          <!-- My Team -->
-        <li class="${styles.menuItem}">
-       <a  class="${styles.link}"  href="#"  tabindex="0" id="myTeamMenu">
-  
-        <i class="bi bi-people-fill"></i> My Team
-        </a>
-        </li>
+      
         
 
           
      <li class="${styles.menuItem} ${styles.askDiaMenu}">
 
-     
-<a
-        href="https://dia.bpcl.in/"
-        target="_blank"
-        data-interception="off"
-        class="${styles.askDiaLink}"
->
+      
+<a href="https://dia.bpcl.in/" target="_blank" data-interception="off"  class="${styles.askDiaLink}">
 <div class="${styles.askDiaContainer}">
 <div class="${styles.askDiaIcon}">
 <img
@@ -642,6 +632,15 @@ export default class ApplicationCustomizerApplicationCustomizer
 
 <li>
  <div class="d-flex">
+
+    <a  id="myTeamMenu" target="_blank" rel="noopener noreferrer">
+  <img src="${myteam}" class="${styles.menuequicklinksIcon}" alt="myteam" />
+ 
+  </a>
+
+  <a href="https://ep.corp.bharatpetroleum.com/irj/portal#Shell-home"  target="_blank" rel="noopener noreferrer">
+  <img src="${myportal}" class="${styles.menuequicklinksIcon}" alt="myportal" />
+  </a>
  
      <a href="https://eoffice.bpcl.in/cas/login?service=https%3A%2F%2Feoffice.bpcl.in%2Flogin.php" target="_blank" rel="noopener noreferrer">
   <img src="${eoffice}" class="${styles.menuequicklinksIcon}" alt="eoffice" />
@@ -651,9 +650,6 @@ export default class ApplicationCustomizerApplicationCustomizer
   <img src="${bitss}" class="${styles.menuequicklinksIcon}" alt="bitss" />
   </a>
  
-  <a href="https://ep.corp.bharatpetroleum.com/irj/portal#Shell-home"  target="_blank" rel="noopener noreferrer">
-  <img src="${myportal}" class="${styles.menuequicklinksIcon}" alt="myportal" />
-  </a>
    
 </div>
 </li>
@@ -704,7 +700,7 @@ export default class ApplicationCustomizerApplicationCustomizer
         event.preventDefault();
 
         try {
-          
+
           if (!this._currentUserSBU && this._sbuPromise) {
             this._currentUserSBU = await this._sbuPromise;
           }
@@ -721,12 +717,12 @@ export default class ApplicationCustomizerApplicationCustomizer
           );
 
           if (!teamSiteUrl) {
-            
+
             return;
           }
 
           // Navigate to Team Site
-         window.open(teamSiteUrl, "_blank", "noopener,noreferrer");
+          window.open(teamSiteUrl, "_blank", "noopener,noreferrer");
 
         } catch (error) {
           // Do nothing

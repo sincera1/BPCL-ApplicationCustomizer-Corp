@@ -188,8 +188,8 @@ export default class ApplicationCustomizerApplicationCustomizer
               Id: subChild.Id,
               Title: subChild.Title,
               SiteURL: subChild.SiteURL,
-              Created: subChild.Created,
-              isNew: isNewItem(subChild.Created),
+              Created: subChild.CreatedDate,
+              isNew: isNewItem(subChild.CreatedDate),
               children: []
             }));
 
@@ -197,9 +197,9 @@ export default class ApplicationCustomizerApplicationCustomizer
             Id: child.Id,
             Title: child.Title,
             SiteURL: child.SiteURL,
-            Created: child.Created,
+            Created: child.CreatedDate,
             isNew:
-              isNewItem(child.Created) ||
+              isNewItem(child.CreatedDate) ||
               childSubChildren.some(subChild => subChild.isNew),
             children: childSubChildren
           };
@@ -209,9 +209,9 @@ export default class ApplicationCustomizerApplicationCustomizer
         Id: parent.Id,
         Title: parent.Title,
         SiteURL: parent.SiteURL,
-        Created: parent.Created,
+        Created: parent.CreatedDate,
         isNew:
-          isNewItem(parent.Created) ||
+          isNewItem(parent.CreatedDate) ||
           parentChildren.some(child => child.isNew),
         children: parentChildren
       };
@@ -494,19 +494,19 @@ export default class ApplicationCustomizerApplicationCustomizer
     };
 
     const hasNewBU = buItems.some(item =>
-      isNewWithin7Days(item.Created)
+      isNewWithin7Days(item.CreatedDate)
     );
 
     const hasNewEntity = entityItems.some(item =>
-      isNewWithin7Days(item.Created)
+      isNewWithin7Days(item.CreatedDate)
     );
 
     const hasNewCorporate = corporateItems.some(item =>
-      isNewWithin7Days(item.Created)
+      isNewWithin7Days(item.CreatedDate)
     );
 
     const hasNewAppLinks = appLinksItems.some(item =>
-      isNewWithin7Days(item.Created)
+      isNewWithin7Days(item.CreatedDate)
     );
     /* ===== BUILD HTML ===== */
     const buHtml = this._renderMenuHtml(
@@ -532,12 +532,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/qa-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -547,6 +547,13 @@ export default class ApplicationCustomizerApplicationCustomizer
     ☰
   </label>
         <ul class="${styles.menu}">
+
+        <!-- Home -->
+        <li class="${styles.menuItem} ${styles.dropdown}">
+            <a class="${styles.link}" href="#" tabindex="0">
+              <i class="bi bi-house-door-fill"></i> Home
+            </a>
+          </li>
 
           <!-- Business Units -->
           <li class="${styles.menuItem} ${styles.dropdown}">
@@ -584,16 +591,7 @@ export default class ApplicationCustomizerApplicationCustomizer
             </ul>
           </li>
 
-          <!-- STATIC ITEMS -->
-          <li class="${styles.menuItem}" >
-            <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/PoliciesAndProcedure.aspx"
-            target="_blank"
-            data-interception="off">
-   
-                <i class="bi bi-file-text-fill"></i> SOP & Guidelines
-            </a>
-          </li>
+         
 
           <!-- Apps & links -->
           <li class="${styles.menuItem} ${styles.dropdown}">
@@ -605,6 +603,17 @@ export default class ApplicationCustomizerApplicationCustomizer
             <ul class="${styles.submenu}">
               ${appLinksHtml}
             </ul>
+          </li>
+
+           <!-- STATIC ITEMS -->
+          <li class="${styles.menuItem}" >
+            <a class="${styles.link}"
+            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
+            target="_blank"
+            data-interception="off">
+   
+                <i class="bi bi-file-text-fill"></i> SOP & Guidelines
+            </a>
           </li>
 
       
@@ -633,20 +642,20 @@ export default class ApplicationCustomizerApplicationCustomizer
 <li>
  <div class="d-flex">
 
-    <a  id="myTeamMenu" target="_blank" rel="noopener noreferrer">
+    <a  id="myTeamMenu" target="_blank" rel="noopener noreferrer" title="My Team">
   <img src="${myteam}" class="${styles.menuequicklinksIcon}" alt="myteam" />
  
   </a>
 
-  <a href="https://ep.corp.bharatpetroleum.com/irj/portal#Shell-home"  target="_blank" rel="noopener noreferrer">
+  <a href="https://ep.corp.bharatpetroleum.com/irj/portal#Shell-home"  target="_blank" rel="noopener noreferrer" title="My Portal">
   <img src="${myportal}" class="${styles.menuequicklinksIcon}" alt="myportal" />
   </a>
  
-     <a href="https://eoffice.bpcl.in/cas/login?service=https%3A%2F%2Feoffice.bpcl.in%2Flogin.php" target="_blank" rel="noopener noreferrer">
+     <a href="https://eoffice.bpcl.in/cas/login?service=https%3A%2F%2Feoffice.bpcl.in%2Flogin.php" target="_blank" rel="noopener noreferrer" title="EOffice">
   <img src="${eoffice}" class="${styles.menuequicklinksIcon}" alt="eoffice" />
   </a>
  
-   <a href="https://bpwebapps.corp.bharatpetroleum.com/BITSS?utm_source=sp&utm_medium=nb"  target="_blank" rel="noopener noreferrer">
+   <a href="https://bpwebapps.corp.bharatpetroleum.com/BITSS?utm_source=sp&utm_medium=nb"  target="_blank" rel="noopener noreferrer" title="BITSS">
   <img src="${bitss}" class="${styles.menuequicklinksIcon}" alt="bitss" />
   </a>
  
@@ -681,10 +690,10 @@ export default class ApplicationCustomizerApplicationCustomizer
        
   
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/User_Guide.aspx" target="_blank"  data-interception="off" tabindex="0">Help</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/User_Guide.aspx" target="_blank"  data-interception="off" tabindex="0">Help</a>
               </li>
               <li class="${styles.gearMenuItem}">
-               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/Feedback.aspx" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
+               <a class="${styles.gearMenuLink}" href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/Feedback.aspx" target="_blank"  data-interception="off" tabindex="0">Feedback</a>
               </li>
             </ul>
           </li>
@@ -788,13 +797,13 @@ export default class ApplicationCustomizerApplicationCustomizer
       </div>
       <div class="${styles.footerRight}">
         
-        <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/Feedback.aspx"
+        <a href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/Feedback.aspx"
         target="_blank"
         data-interception="off"
         rel="noopener noreferrer">
         Feedback
         </a>
-        <a href="https://bharatpetroleum.sharepoint.com/sites/qa-iConnect/SitePages/User_Guide.aspx"
+        <a href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/User_Guide.aspx"
         target="_blank"
         data-interception="off"
         rel="noopener noreferrer"

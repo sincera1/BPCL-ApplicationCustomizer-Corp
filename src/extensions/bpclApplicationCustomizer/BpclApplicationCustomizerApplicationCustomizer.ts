@@ -532,12 +532,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/iconnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/iConnect"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/iConnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -550,10 +550,11 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Home -->
         <li class="${styles.menuItem} ${styles.dropdown}">
-            <a class="${styles.link}  ${styles.homeMenu}" href="#" tabindex="0">
+            <a class="${styles.link}  ${styles.homeMenu}" href="https://bharatpetroleum.sharepoint.com/sites/iConnect" tabindex="0"  target="_blank" data-interception="off">
               <i class="bi bi-house-door-fill"></i> Home
             </a>
           </li>
+
 
           <!-- Business Units -->
           <li class="${styles.menuItem} ${styles.dropdown}">
@@ -608,7 +609,7 @@ export default class ApplicationCustomizerApplicationCustomizer
            <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    

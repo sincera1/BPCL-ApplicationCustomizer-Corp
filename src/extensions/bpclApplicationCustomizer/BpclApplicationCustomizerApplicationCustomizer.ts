@@ -121,18 +121,14 @@ export default class ApplicationCustomizerApplicationCustomizer
     
       #vpc_Page\\.SiteFooter\\.internal\\.03025612-a400-4804-a78e-e1493200a43b { display: none !important; }
       #CommentsWrapper { display: none !important; }
-      #O365_MainLink_Settings {
-      display: none !important;
-    }
-
+      #O365_MainLink_Settings {display: none !important;}
+      
        #spLeftNav {
       display: none !important;
     }
 
+    .ms-HorizontalNav { display: none !important;}
      
-    [data-automationid="appHeaderBar"] {
-      display: none !important;
-    }
     
     `;
     document.head.appendChild(style);
@@ -537,7 +533,7 @@ export default class ApplicationCustomizerApplicationCustomizer
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/iConnect-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-cph/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>

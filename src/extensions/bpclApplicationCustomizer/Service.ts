@@ -34,7 +34,7 @@ interface ITeamSiteMasterItemResponse {
 export default class MenuService {
 
 
-  private static HUB_SITE = "/sites/iconnect-cph";
+  private static HUB_SITE = "/sites/dev-corporate-publishing-hub";
 
   //  Dynamic base URL (tenant comes automatically)
   private static getBaseUrl(): string {

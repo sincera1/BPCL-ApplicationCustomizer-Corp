@@ -7,6 +7,7 @@ import eoffice from './assets/eOffice.png';
 import bitss from './assets/bitss.png';
 import myportal from './assets/myportal.png';
 import myteam from './assets/myteam.png'
+import { SPHttpClient } from "@microsoft/sp-http";
 
 import { BaseApplicationCustomizer, PlaceholderContent, PlaceholderName } from '@microsoft/sp-application-base';
 
@@ -31,6 +32,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
   public async onInit(): Promise<void> {
 
+    this._restrictCorpCommunicationList();
     Log.info('ApplicationCustomizer', 'Initialized');
 
     this._hideAppBar();
@@ -528,12 +530,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/iConnect"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-cph/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -546,7 +548,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Home -->
         <li class="${styles.menuItem} ${styles.dropdown}">
-            <a class="${styles.link}  ${styles.homeMenu}" href="https://bharatpetroleum.sharepoint.com/sites/iConnect" tabindex="0"  target="_blank" data-interception="off">
+            <a class="${styles.link}  ${styles.homeMenu}" href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final" tabindex="0"  target="_blank" data-interception="off">
               <i class="bi bi-house-door-fill"></i> Home
             </a>
           </li>
@@ -605,7 +607,7 @@ export default class ApplicationCustomizerApplicationCustomizer
            <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/iConnect/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -815,4 +817,147 @@ export default class ApplicationCustomizerApplicationCustomizer
 
     pageCanvas.appendChild(footerContainer);
   }
+
+  /* for hiding site content and cph corp communicationlist */
+
+
+  // private _restrictCorpCommunicationList(): void {
+
+  //   const currentUrl = new URL(window.location.href);
+  //   const currentPath = currentUrl.pathname.toLowerCase();
+
+  //   // Restrict all pages inside the CorpCommunication list
+  //   const isCorpCommunicationList =
+  //     currentPath.includes("/lists/corpcommunication/");
+  //   const isTeamCMList =
+  //     currentPath.includes("/lists/TeamCMList/");
+  //   const isTeamSiteMasterList =
+  //     currentPath.includes("/lists/TeamSiteMaster/");
+  //   const isTransferSbuIndexList =
+  //     currentPath.includes("/lists/TransferSbuIndexList/");
+  //   const isTransferListImages =
+  //     currentPath.includes("/lists/TransferListImages/");
+
+
+  //   // Restrict only the specified Site Contents page
+  //   // Additional Teams query parameters are allowed
+  //   const isSpecificSiteContentsView =
+  //     currentUrl.origin.toLowerCase() ===
+  //     "https://bharatpetroleum.sharepoint.com" &&
+  //     currentPath ===
+  //     "/sites/dev-corporate-publishing-hub/_layouts/15/viewlsts.aspx" &&
+  //     currentUrl.searchParams.get("view") === "14";
+
+  //   // Check whether the current page is restricted
+  //   const isRestrictedPage =
+  //     isCorpCommunicationList || isTeamCMList || isTeamSiteMasterList || isTransferSbuIndexList || isTransferListImages || isSpecificSiteContentsView;
+
+  //   if (!isRestrictedPage) {
+  //     return;
+  //   }
+
+  //   // Allow Site Collection Administrators
+  //   const isSiteAdmin =
+  //     this.context.pageContext.legacyPageContext["isSiteAdmin"] === true;
+  //   // Allow Site Collection Administrators
+  //   const isSiteOwner =
+  //     this.context.pageContext.legacyPageContext["isSiteOwner"] === true;
+
+  //   if (!isSiteAdmin || !isSiteOwner) {
+  //     const accessDeniedUrl =
+  //       `${currentUrl.origin}/_layouts/15/AccessDenied.aspx`;
+
+  //     window.location.replace(accessDeniedUrl);
+  //   }
+  // }
+
+
+  private async _restrictCorpCommunicationList(): Promise<void> {
+
+    const currentUrl = new URL(window.location.href);
+    const currentPath = currentUrl.pathname.toLowerCase();
+
+    // Restricted SharePoint lists
+    const restrictedLists = [
+      "/lists/corpcommunication/",
+      "/lists/teamcmlist/",
+      "/lists/teamsitemaster/",
+      "/lists/transfersbuindexlist/",
+      "/lists/transferlistimages/"
+    ];
+
+    const isRestrictedList = restrictedLists.some(listPath =>
+      currentPath.includes(listPath)
+    );
+
+    // Restrict the specified Site Contents page
+    const isSpecificSiteContentsView =
+      currentUrl.origin.toLowerCase() ===
+      "https://bharatpetroleum.sharepoint.com" &&
+      currentPath ===
+      "/sites/dev-corporate-publishing-hub/_layouts/15/viewlsts.aspx" &&
+      currentUrl.searchParams.get("view") === "14";
+
+    const isRestrictedPage =
+      isRestrictedList || isSpecificSiteContentsView;
+
+    if (!isRestrictedPage) {
+      return;
+    }
+
+    // Allow Site Collection Administrators
+    const isSiteAdmin =
+      this.context.pageContext.legacyPageContext["isSiteAdmin"] === true;
+
+    if (isSiteAdmin) {
+      return;
+    }
+
+    try {
+      const response = await this.context.spHttpClient.get(
+        `${this.context.pageContext.web.absoluteUrl}/_api/web/currentuser/?$expand=Groups`,
+        SPHttpClient.configurations.v1,
+        {
+          headers: {
+            Accept: "application/json;odata=nometadata"
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to retrieve SharePoint user groups.");
+      }
+
+      const userData = await response.json();
+
+      const groups: { Title: string }[] = userData.Groups || [];
+
+     
+      const isSiteOwner = groups.some(
+        group =>
+          typeof group.Title === "string" &&
+          group.Title.trim().toLowerCase().endsWith(" owners")
+      );
+
+      if (isSiteOwner) {
+        return;
+      }
+
+      // Deny access to other users
+      window.location.replace(
+        `${currentUrl.origin}/_layouts/15/AccessDenied.aspx`
+      );
+
+    } catch (error) {
+      console.error("Error checking SharePoint Owners membership:", error);
+
+      // Fail closed if membership cannot be verified
+      window.location.replace(
+        `${currentUrl.origin}/_layouts/15/AccessDenied.aspx`
+      );
+    }
+  }
+
+
+
 }

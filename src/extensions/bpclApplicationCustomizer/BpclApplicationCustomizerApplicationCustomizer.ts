@@ -530,12 +530,12 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Logo -->
          <div>
-          <a href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final"
+          <a href="https://bharatpetroleum.sharepoint.com/sites/iconnect"
              target="_blank"
              data-interception="off"
              class="${styles.logo}" style="text-decoration: none; color: inherit;">
             
-            <img src="https://bharatpetroleum.sharepoint.com/sites/dev-corporate-publishing-hub/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
+            <img src="https://bharatpetroleum.sharepoint.com/sites/iconnect-cph/SiteAssets/Masterlogo/iconnectlogo.jpeg" alt="iConnect Logo" />
             
              </a>
         </div>
@@ -548,7 +548,7 @@ export default class ApplicationCustomizerApplicationCustomizer
 
         <!-- Home -->
         <li class="${styles.menuItem} ${styles.dropdown}">
-            <a class="${styles.link}  ${styles.homeMenu}" href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final" tabindex="0"  target="_blank" data-interception="off">
+            <a class="${styles.link}  ${styles.homeMenu}" href="https://bharatpetroleum.sharepoint.com/sites/iconnect" tabindex="0"  target="_blank" data-interception="off">
               <i class="bi bi-house-door-fill"></i> Home
             </a>
           </li>
@@ -607,7 +607,7 @@ export default class ApplicationCustomizerApplicationCustomizer
            <!-- STATIC ITEMS -->
           <li class="${styles.menuItem}" >
             <a class="${styles.link}"
-            href="https://bharatpetroleum.sharepoint.com/sites/dev-iconnect-final/SitePages/PoliciesAndProcedure.aspx"
+            href="https://bharatpetroleum.sharepoint.com/sites/iconnect/SitePages/PoliciesAndProcedure.aspx"
             target="_blank"
             data-interception="off">
    
@@ -883,7 +883,12 @@ export default class ApplicationCustomizerApplicationCustomizer
       "/lists/teamcmlist/",
       "/lists/teamsitemaster/",
       "/lists/transfersbuindexlist/",
-      "/lists/transferlistimages/"
+      "/lists/menumasterlist/",
+      "/lists/transferteamlist/",
+      "/lists/corpgovernance/",
+      "/lists/corpreports/",
+      "/broadcasticons/",
+      "/transferlistimages/"
     ];
 
     const isRestrictedList = restrictedLists.some(listPath =>
@@ -895,7 +900,7 @@ export default class ApplicationCustomizerApplicationCustomizer
       currentUrl.origin.toLowerCase() ===
       "https://bharatpetroleum.sharepoint.com" &&
       currentPath ===
-      "/sites/dev-corporate-publishing-hub/_layouts/15/viewlsts.aspx" &&
+      "/sites/iconnect-cph/_layouts/15/viewlsts.aspx" &&
       currentUrl.searchParams.get("view") === "14";
 
     const isRestrictedPage =
